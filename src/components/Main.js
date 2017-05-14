@@ -1,12 +1,13 @@
 import React from "react";
 import App from "./App";
 import {connect} from "react-redux";
-import UserStatus from "./UserStatus"
+import UserStatus from "./UserStatus";
 
 import {APP_ID, GRAPH_API_VERSION} from "../config";
-import {setConnectionStatus} from "../actions/index";
+import {setConnectionStatus, fetchPhotos} from "../actions/index";
 
 class Main extends React.Component {
+
     static loadSdk() {
         (function(d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
@@ -40,11 +41,15 @@ class Main extends React.Component {
         }.bind(this);
     }
 
+    getPhotos() {
+        this.props.dispatch(fetchPhotos());
+    }
+
     statusChangeCallback(response) {
         console.log('statusChangeCallback');
         this.props.dispatch(setConnectionStatus(response));
+        this.getPhotos();
     }
-
 
     loginHandler() {
         let self = this;
@@ -60,10 +65,12 @@ class Main extends React.Component {
                     console.log('Good to see you, ' + response.name + '.');
                 });
 
+                self.getPhotos();
+
             } else {
                 console.log('User cancelled login or did not fully authorize.');
             }
-        },{scope: 'user_photos'});
+        }, {scope: 'user_photos'});
     }
 
     componentDidMount() {
