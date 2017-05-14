@@ -2,6 +2,7 @@ import React from "react";
 import App from "./App";
 import {connect} from "react-redux";
 import UserStatus from "./UserStatus";
+import PhotosPrompt from "./PhotosPrompt";
 
 import {APP_ID, GRAPH_API_VERSION} from "../config";
 import {setConnectionStatus, fetchPhotos} from "../actions/index";
@@ -86,6 +87,7 @@ class Main extends React.Component {
                 <button onClick={this.loginHandler}>
                     login
                 </button>
+                <PhotosPrompt/>
             </App>
         );
     }

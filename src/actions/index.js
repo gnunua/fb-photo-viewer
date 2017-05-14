@@ -5,7 +5,6 @@ export const setConnectionStatus = (payload) => ({
     payload
 });
 
-
 const fetchPhotosStart = () => ({
     type: Actions.FETCH_PHOTOS_START
 });
@@ -20,9 +19,7 @@ const fetchPhotosFaild = (err) => ({
     payload: err
 });
 
-
-const makeFacebookPhotoURL = (id, accessToken) => (`https://graph.facebook.com/${id}/picture?access_token=${accessToken}`)
-
+const makeFacebookPhotoURL = (id, accessToken) => (`https://graph.facebook.com/${id}/picture?access_token=${accessToken}`);
 
 export const fetchPhotos = () => {
     return function (dispatch, getState) {
@@ -32,19 +29,22 @@ export const fetchPhotos = () => {
         FB.api(
             '/me/photos',
             'GET',
-            {"fields": "id"},
+            {"fields": "id", "limit": "10"},
             function (response) {
 
+                if (response.error) {
+                    dispatch(fetchPhotosFaild(response.error));
+                    return;
+                }
                 let {data} = response;
+
                 let newData = data.map(({id}) => {
-                    let url = makeFacebookPhotoURL(response.data[0].id, accessToken);
+                    let url = makeFacebookPhotoURL(id, accessToken);
                     return {
                         id,
                         url
                     };
                 });
-
-                console.log(newData);
 
                 dispatch(fetchPhotosSuccess(newData));
 

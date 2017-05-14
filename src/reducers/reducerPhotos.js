@@ -25,7 +25,6 @@ const reducerPhotos = (state = initialData, action) => {
                 fetchingState: getCallStatus(false, false, true, action.payload)
             };
         case FETCH_PHOTOS_SUCCESS : {
-            debugger;
             return {
                 ...state,
                 fetchingState: getCallStatus(false, true, false, null),
