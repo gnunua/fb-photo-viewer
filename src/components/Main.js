@@ -7,7 +7,6 @@ import {APP_ID, GRAPH_API_VERSION} from "../config";
 import {setConnectionStatus} from "../actions/index";
 
 class Main extends React.Component {
-
     static loadSdk() {
         (function(d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
@@ -21,7 +20,7 @@ class Main extends React.Component {
     constructor(props) {
         super(props);
         this.init = this.init.bind(this);
-
+        this.loginHandler = this.loginHandler.bind(this);
     }
 
     init() {
@@ -44,7 +43,27 @@ class Main extends React.Component {
     statusChangeCallback(response) {
         console.log('statusChangeCallback');
         this.props.dispatch(setConnectionStatus(response));
+    }
 
+
+    loginHandler() {
+        let self = this;
+
+        FB.login(function(response) {
+
+            self.props.dispatch(setConnectionStatus(response));
+
+            if (response.authResponse) {
+                console.log('Welcome!  Fetching your information.... ');
+
+                FB.api('/me', function(response) {
+                    console.log('Good to see you, ' + response.name + '.');
+                });
+
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+            }
+        },{scope: 'user_photos'});
     }
 
     componentDidMount() {
@@ -57,6 +76,9 @@ class Main extends React.Component {
             <App>
                 Hello world
                 <UserStatus status = {this.props.status} />
+                <button onClick={this.loginHandler}>
+                    login
+                </button>
             </App>
         );
     }
