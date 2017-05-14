@@ -1,11 +1,11 @@
 import {combineReducers} from "redux";
 import {routerReducer} from "react-router-redux";
+import reducerStatus from "./reducerStatus";
 
 const rootReducer = combineReducers({
-    a: f => {
-        return f || null;
-    },
+    appStatus: reducerStatus,
     routing: routerReducer
+
 });
 
 export default rootReducer;
