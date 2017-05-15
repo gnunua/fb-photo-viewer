@@ -1,19 +1,21 @@
 import React from "react";
 import App from "./App";
 import {connect} from "react-redux";
-import UserStatus from "./UserStatus";
 import PhotosPrompt from "./PhotosPrompt";
-
 import {APP_ID, GRAPH_API_VERSION} from "../config";
-import {setConnectionStatus, fetchPhotos} from "../actions/index";
+import ContentWrapper from "./ContentWrapper";
+import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 
 class Main extends React.Component {
 
     static loadSdk() {
-        (function(d, s, id) {
+        (function (d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
             js.src = "//connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
@@ -47,31 +49,29 @@ class Main extends React.Component {
     }
 
     statusChangeCallback(response) {
-        console.log('statusChangeCallback');
+        console.log('statusChangeCallback', response);
         this.props.dispatch(setConnectionStatus(response));
+        this.props.dispatch(checkDeclinedPermissions());
+
         this.getPhotos();
     }
 
     loginHandler() {
         let self = this;
-
-        FB.login(function(response) {
-
+        FB.login(function (response) {
             self.props.dispatch(setConnectionStatus(response));
 
             if (response.authResponse) {
                 console.log('Welcome!  Fetching your information.... ');
-
-                FB.api('/me', function(response) {
-                    console.log('Good to see you, ' + response.name + '.');
-                });
+                self.props.dispatch(checkDeclinedPermissions());
 
                 self.getPhotos();
 
             } else {
+
                 console.log('User cancelled login or did not fully authorize.');
             }
-        }, {scope: 'user_photos'});
+        }, {scope: 'user_photos', auth_type: 'rerequest'});
     }
 
     componentDidMount() {
@@ -80,14 +80,50 @@ class Main extends React.Component {
     }
 
     render() {
+        let {hasDeclinedPermission, status} = this.props;
+
+        const renderHeader = () => {
+
+            if (status === 'connected' && hasDeclinedPermission === false) {
+                return (null);
+            } else if (status === 'connected' && hasDeclinedPermission === false) {
+                return (
+                    <div>
+                        <h3 className="text-primary">
+                            Unable to retrieve photos
+                            The required permissions was not granted. Please grant view photos permissions.
+                            Press Sign in again to grant.
+                        </h3>
+                        <button type="button" className="btn btn-primary btn-lg center-block"
+                                onClick={this.loginHandler}>
+                            Sign in with facebook!
+                        </button>
+                    </div>
+                );
+            } else {
+                return (
+                    <div>
+                        <h3 className="text-primary">
+                            Please sign in with your facebook account and make sure to grant view photos permission
+                        </h3>
+                        <button type="button" className="btn btn-primary btn-lg center-block"
+                                onClick={this.loginHandler}>
+                            Sign in with facebook!
+                        </button>
+                    </div>
+                );
+            }
+
+        };
+
         return (
             <App>
-                Hello world
-                <UserStatus status = {this.props.status} />
-                <button onClick={this.loginHandler}>
-                    login
-                </button>
-                <PhotosPrompt/>
+                <div className="center-block">
+                    <ContentWrapper isLoaded = { !(status === "" && hasDeclinedPermission === null) }>
+                        {renderHeader()}
+                        <PhotosPrompt/>
+                    </ContentWrapper>
+                </div>
             </App>
         );
     }
@@ -97,7 +133,8 @@ class Main extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ownProps,
-        status: state.appStatus.status
+        status: state.appStatus.status,
+        hasDeclinedPermission: state.appStatus.hasDeclinedPermission
     };
 };
 export default connect(mapStateToProps)(Main);

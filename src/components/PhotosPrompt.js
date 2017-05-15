@@ -15,7 +15,7 @@ class PhotosPrompt extends Component {
         };
 
         return (
-                <div className="container bg-success">
+                <div className="bg-success">
                     {renderPhotos()}
                 </div>
 

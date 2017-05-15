@@ -19,13 +19,17 @@ const fetchPhotosFaild = (err) => ({
     payload: err
 });
 
-const makeFacebookPhotoURL = (id, accessToken) => (`https://graph.facebook.com/${id}/picture?access_token=${accessToken}`);
+const makeFacebookPhotoURL = (id, accessToken) => `https://graph.facebook.com/${id}/picture?access_token=${accessToken}`;
 
 export const fetchPhotos = () => {
     return function (dispatch, getState) {
         dispatch(fetchPhotosStart());
 
-        let accessToken = getState().appStatus.authResponse.accessToken;
+        let accessToken;
+        if (getState().appStatus.authResponse) {
+            accessToken = getState().appStatus.authResponse.accessToken;
+
+        }
         FB.api(
             '/me/photos',
             'GET',
@@ -47,8 +51,35 @@ export const fetchPhotos = () => {
                 });
 
                 dispatch(fetchPhotosSuccess(newData));
-
             }
         );
+    };
+};
+
+const setDeclinedPermission = (payload) => ({
+    type: Actions.SET_DECLIEND_PERMISSION,
+    payload
+});
+
+export const checkDeclinedPermissions = () => {
+    return function (dispatch) {
+        FB.api('/me/permissions', function(response) {
+            if (response.error) {
+                return;
+            }
+
+            let hasDeclined = false;
+            for (let i = 0; i < response.data.length; i++) {
+
+                if (response.data[i].status === 'declined') {
+                    hasDeclined = true;
+                    break;
+                }
+            }
+
+            dispatch(setDeclinedPermission(hasDeclined));
+
+        });
+
     };
 };
