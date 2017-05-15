@@ -1,4 +1,6 @@
-import React, {Component} from "react";
+import React from "react";
+import PropTypes from 'prop-types';
+
 import {connect} from "react-redux";
 import Loader from "../components/Loader";
 import {photosPromptSelector} from "../selectors";
@@ -23,6 +25,12 @@ const PhotosPrompt = ({photos, isLoaded, loggedIn}) => {
             {renderContent()}
         </div>
     );
+};
+
+PhotosPrompt.propTypes = {
+    photos: PropTypes.arrayOf(PropTypes.object),
+    isLoaded: PropTypes.bool.isRequired,
+    loggedIn: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {

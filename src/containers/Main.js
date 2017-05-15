@@ -1,14 +1,15 @@
-import React from "react";
-import App from "../components/App";
+import React, {Component} from "react";
+import PropTypes from 'prop-types';
 import {connect} from "react-redux";
+import App from "../components/App";
 import PhotosPrompt from "./PhotosPrompt";
 import {APP_ID, GRAPH_API_VERSION} from "../config";
-import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 import {appCoreSelector} from "../selectors";
 import Header from "../components/Header";
 import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN} from "../config/consts";
+import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 
-class Main extends React.Component {
+class Main extends Component {
     static loadSdk() {
         (function (d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
@@ -30,16 +31,16 @@ class Main extends React.Component {
 
     init() {
         window.fbAsyncInit = function () {
-            FB.init({
+            window.FB.init({
                 appId: APP_ID,
                 cookie: true,
                 xfbml: true,
                 version: GRAPH_API_VERSION
             });
 
-            FB.AppEvents.logPageView();
+            window.FB.AppEvents.logPageView();
 
-            FB.getLoginStatus(function (response) {
+            window.FB.getLoginStatus(function (response) {
                 this.statusChangeCallback(response);
             }.bind(this));
         }.bind(this);
@@ -57,7 +58,7 @@ class Main extends React.Component {
 
     loginHandler() {
         let self = this;
-        FB.login(function (response) {
+        window.FB.login(function (response) {
             self.props.dispatch(setConnectionStatus(response));
             if (response.authResponse) {
                 self.props.dispatch(checkDeclinedPermissions());
@@ -106,6 +107,12 @@ class Main extends React.Component {
     }
 
 }
+
+Main.propTypes = {
+    success: PropTypes.bool.isRequired,
+    loggedIn: PropTypes.bool.isRequired,
+    hasDeclinedPermission: PropTypes.bool.isRequired
+};
 
 const mapStateToProps = (state, ownProps) => {
     return {

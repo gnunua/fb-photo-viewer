@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 const SignInButton = ({onSignIn}) => {
     return (
@@ -11,6 +12,10 @@ const SignInButton = ({onSignIn}) => {
         </button>
 
     );
+};
+
+SignInButton.propTypes = {
+    onSignIn: PropTypes.func.isRequired
 };
 
 export default SignInButton;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 const PhotoGrid = ({url}) => {
     return (
@@ -6,6 +7,10 @@ const PhotoGrid = ({url}) => {
             <img src={url} className="img-responsive img-rounded"/>
         </div>
     );
+};
+
+PhotoGrid.propTypes = {
+    url: PropTypes.string.isRequired
 };
 
 export default PhotoGrid;
