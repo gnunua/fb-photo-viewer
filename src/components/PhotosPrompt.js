@@ -1,11 +1,16 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import Loader from "./Loader";
+import {photosPromptSelector} from "../selectors";
 
 class PhotosPrompt extends Component {
     render() {
         const renderPhotos = () => {
-            const {photos, ownProps: {isLoaded}} = this.props;
+            const {photos, isLoaded, loggedIn} = this.props;
+            if (!loggedIn) {
+                return (null);
+            }
+
             if (!isLoaded) {
                 return (
                     <Loader/>
@@ -32,7 +37,7 @@ class PhotosPrompt extends Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ownProps,
-        photos: state.photos.fetchedData
+        ...photosPromptSelector(state)
     };
 };
 

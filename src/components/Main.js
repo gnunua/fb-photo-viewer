@@ -75,7 +75,7 @@ class Main extends React.Component {
     }
 
     render() {
-        const {hasDeclinedPermission, success, isLoaded, loggedIn} = this.props;
+        const {hasDeclinedPermission, success, loggedIn} = this.props;
 
         const renderHeader = () => {
 
@@ -105,7 +105,7 @@ class Main extends React.Component {
         return (
             <App>
                 {renderHeader()}
-                <PhotosPrompt isLoaded={isLoaded}/>
+                <PhotosPrompt/>
             </App>
         );
     }
