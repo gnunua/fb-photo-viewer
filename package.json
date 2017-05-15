@@ -6,8 +6,8 @@
   "repository": "https://github.com/gnunua/fb-photo-viewer.git",
   "scripts": {
     "start": "webpack-dev-server --inline --hot",
-    "prod": "webpack --config webpack.config.prod.js -p",
-    "dev": "webpack --config webpack.config.js"
+    "build:prod": "webpack --config webpack.config.prod.js -p",
+    "build:dev": "webpack --config webpack.config.js"
   },
   "author": "Gnun Ulikhanyan",
   "license": "MIT",
