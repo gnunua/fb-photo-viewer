@@ -1,10 +1,5 @@
 import * as Actions from "./actionTypes";
-import {MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT} from "../config/index";
-
-//helper functions
-const makeFacebookPhotoURL = (id, accessToken) => `https://graph.facebook.com/${id}/picture?access_token=${accessToken}`;
-const getRandomIntInRange = (min, max) => Math.floor(Math.random() * (max - min)) + min;
-const randomPhotoCount = () => getRandomIntInRange(MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT);
+import {randomPhotoCount, shuffleArray, makeFacebookPhotoURL} from "../helpers";
 
 export const setConnectionStatus = (payload) => ({
     type: Actions.CONNECTION_STATUS,
@@ -28,23 +23,25 @@ const fetchPhotosFail = (err) => ({
 export const fetchPhotos = () => {
     return function (dispatch, getState) {
         dispatch(fetchPhotosStart());
-
         let accessToken;
-        if (getState().appStatus.authResponse) {
-            accessToken = getState().appStatus.authResponse.accessToken;
+        let {authResponse} = getState().appStatus;
 
+        if (authResponse) {
+            accessToken = authResponse.accessToken;
         }
-        FB.api(
+
+        window.FB.api(
             '/me/photos',
             'GET',
             {"fields": "id", "limit": `${randomPhotoCount()}`},
-            function (response) {
+            function ({error, data}) {
 
-                if (response.error) {
-                    dispatch(fetchPhotosFail(response.error));
+                if (error) {
+                    dispatch(fetchPhotosFail(error));
                     return;
                 }
-                let {data} = response;
+
+                shuffleArray(data);
 
                 let newData = data.map(({id}) => {
                     let url = makeFacebookPhotoURL(id, accessToken);
@@ -67,22 +64,19 @@ const setDeclinedPermission = (payload) => ({
 
 export const checkDeclinedPermissions = () => {
     return function (dispatch) {
-        FB.api('/me/permissions', function (response) {
-            if (response.error) {
+        window.FB.api('/me/permissions', function ({error, data}) {
+            if (error) {
+                console.log('permissions fetching error ', error)
                 return;
             }
-
             let hasDeclined = false;
-            for (let i = 0; i < response.data.length; i++) {
-
-                if (response.data[i].status === 'declined') {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].status === 'declined') {
                     hasDeclined = true;
                     break;
                 }
             }
-
             dispatch(setDeclinedPermission(hasDeclined));
-
         });
 
     };
