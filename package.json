@@ -1,6 +1,6 @@
 {
   "name": "fb-photo-viewer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "facebook photo viewer",
   "main": "index.js",
   "repository": "https://github.com/gnunua/fb-photo-viewer.git",
