@@ -1,14 +1,13 @@
 import React from "react";
 import PropTypes from 'prop-types';
-
 import {connect} from "react-redux";
 import Loader from "../components/Loader";
 import {photosPromptSelector} from "../selectors";
 import PhotoGrid from "../components/PhotoGrid";
 
-const PhotosPrompt = ({photos, isLoaded, loggedIn}) => {
+const PhotosPrompt = ({photos, isLoaded, loggedIn, hasDeclinedPermission}) => {
     const renderContent = () => {
-        if (!isLoaded && loggedIn) {
+        if (!isLoaded && loggedIn && hasDeclinedPermission === false) {
             return (
                 <Loader/>
             );
@@ -30,7 +29,8 @@ const PhotosPrompt = ({photos, isLoaded, loggedIn}) => {
 PhotosPrompt.propTypes = {
     photos: PropTypes.arrayOf(PropTypes.object),
     isLoaded: PropTypes.bool.isRequired,
-    loggedIn: PropTypes.bool.isRequired
+    loggedIn: PropTypes.bool.isRequired,
+    hasDeclinedPermission: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
