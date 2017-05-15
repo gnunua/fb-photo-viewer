@@ -1,12 +1,12 @@
 import React from "react";
-import App from "./App";
+import App from "../components/App";
 import {connect} from "react-redux";
 import PhotosPrompt from "./PhotosPrompt";
 import {APP_ID, GRAPH_API_VERSION} from "../config";
-import SignInButton from "./SignInButton";
 import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 import {appCoreSelector} from "../selectors";
-import Header from "./Title";
+import Header from "../components/Header";
+import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN} from "../config/consts";
 
 class Main extends React.Component {
     static loadSdk() {
@@ -78,26 +78,21 @@ class Main extends React.Component {
         const {hasDeclinedPermission, success, loggedIn} = this.props;
 
         const renderHeader = () => {
-
             if (success) {
                 return (null);
             } else if (hasDeclinedPermission) {
                 return (
-                    <div>
-                        <Header title={`Unable to retrieve photos
-                            The required permissions was not granted. Please grant view photos permissions.
-                            Press Sign in again to grant.`}
-                        />
-                        <SignInButton onSignIn={this.loginHandler}/>
-                    </div>
+                    <Header
+                        title={TITLE_ABSENT_OF_PERMISSIONS}
+                        loginHandler={this.loginHandler}
+                    />
                 );
             } else if (!loggedIn) {
                 return (
-                    <div>
-                        <Header
-                            title={"Please sign in with your facebook account and make sure to grant view photos permission"}/>
-                        <SignInButton onSignIn={this.loginHandler}/>
-                    </div>
+                    <Header
+                        title={TITLE_SIGN_IN}
+                        loginHandler={this.loginHandler}
+                    />
                 );
             }
         };
@@ -115,7 +110,7 @@ class Main extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ownProps,
-        ...appCoreSelector(state),
+        ...appCoreSelector(state)
     };
 };
 export default connect(mapStateToProps)(Main);

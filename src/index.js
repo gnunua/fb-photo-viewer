@@ -7,7 +7,7 @@ import reducers from "./reducers";
 import thunk from "redux-thunk";
 import {syncHistoryWithStore} from "react-router-redux";
 import {createHistory} from "history";
-import Main from "./components/Main";
+import Main from "./containers/Main";
 
 const createStoreWithMiddleware = applyMiddleware(
     thunk
