@@ -1,6 +1,6 @@
 # Facebook photo viewer test application
-        ### Directory structure
-        * **src** - main development code
+### Directory structure
+* **src** - main development code
         subdirectories:
         - **actions** - all redux action creators are here (both sync and async) and action types
         - **components** - react/redux Presentational Components
@@ -12,17 +12,17 @@
         - **index.js** - application entry point scripts
         - **selectors.js** -  Using [redux-reselect](https://github.com/reactjs/reselect) selectors library
 
-        * **dist** - generated sources ready for deployment
+* **dist** - generated sources ready for deployment
         ### Build process
-        Using [Webpack](https://webpack.github.io/) to bundle code.
+        Use [Webpack](https://webpack.github.io/) to bundle code.
         There are 2 webpack configurations:
 
-        * webpack.config.js - webpack config for creating the develompment bundle
-        * webpack.config.prod.js - webpack config for creating the production minified bundle
+    * webpack.config.js - webpack config for creating the develompment bundle
+    * webpack.config.prod.js - webpack config for creating the production minified bundle
 
-        ### Running tasks
+### Running tasks
         npm can be used to run tasks from package.json
         the following tasks are available:
-        * **start** - runs webpack dev server in hot mode
-        * **build:prod** - builds production bundle js file
-        * **build:dev** - builds develomnet bundle js file
+* **start** - runs webpack dev server in hot mode
+* **build:prod** - builds production bundle js file
+* **build:dev** - builds develomnet bundle js file
