@@ -1,21 +1,22 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-const SignInButton = ({onSignIn}) => {
+const SignInButton = ({onSignIn, message}) => {
     return (
         <button
             type="button"
             className="btn btn-primary btn-lg center-block"
             onClick={onSignIn}
         >
-            Sign in with facebook!
+            {message}
         </button>
 
     );
 };
 
 SignInButton.propTypes = {
-    onSignIn: PropTypes.func.isRequired
+    onSignIn: PropTypes.func.isRequired,
+    message: PropTypes.string.isRequired
 };
 
 export default SignInButton;

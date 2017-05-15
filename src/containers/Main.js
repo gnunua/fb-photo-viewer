@@ -7,7 +7,7 @@ import PhotosPrompt from "./PhotosPrompt";
 import {APP_ID, GRAPH_API_VERSION} from "../config";
 import {appCoreSelector} from "../selectors";
 import Header from "../components/Header";
-import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN} from "../config/consts";
+import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN, SIGN_IN, GRANT} from "../config/consts";
 import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 
 class Main extends Component {
@@ -82,6 +82,7 @@ class Main extends Component {
                 return (
                     <Header
                         title={TITLE_ABSENT_OF_PERMISSIONS}
+                        btnMeassage={GRANT}
                         loginHandler={this.loginHandler}
                     />
                 );
@@ -89,6 +90,7 @@ class Main extends Component {
                 return (
                     <Header
                         title={TITLE_SIGN_IN}
+                        btnMeassage={SIGN_IN}
                         loginHandler={this.loginHandler}
                     />
                 );
