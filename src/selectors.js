@@ -39,7 +39,7 @@ export const appCoreSelector = createSelector(
 );
 
 export const photosPromptSelector = createSelector(
-    [photosListSelectorInput, isPhotosLoadedInput, dataSuccessLoadedSelector],
+    [photosListSelectorInput, loggedInSelector, dataSuccessLoadedSelector],
     (photos, loggedIn, isLoaded) => ({
         photos,
         loggedIn,
