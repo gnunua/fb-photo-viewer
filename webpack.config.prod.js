@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-console.warn("Webpack running in development mode");
+console.warn("Webpack running in  production");
 
 let plugins = [
     new HtmlWebpackPlugin({
@@ -12,10 +12,22 @@ let plugins = [
     new webpack.optimize.OccurrenceOrderPlugin(),
 
     new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development'),
+        'process.env.NODE_ENV': JSON.stringify('production'),
         'version': JSON.stringify(require("./package.json").version)
     })
 ];
+
+plugins.push(new webpack.optimize.UglifyJsPlugin({
+    minimize: true,
+    sourceMap: true,
+    output: {
+        comments: false
+    },
+    compress: {
+        drop_console: true,
+        warnings: false
+    }
+}));
 
 module.exports = {
     devServer: {
