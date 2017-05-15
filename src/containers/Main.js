@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import PropTypes from 'prop-types';
+import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import App from "../components/App";
 import PhotosPrompt from "./PhotosPrompt";
@@ -46,23 +47,19 @@ class Main extends Component {
         }.bind(this);
     }
 
-    getPhotos() {
-        this.props.dispatch(fetchPhotos());
-    }
-
     statusChangeCallback(response) {
-        this.props.dispatch(setConnectionStatus(response));
-        this.props.dispatch(checkDeclinedPermissions());
-        this.getPhotos();
+        this.props.setConnectionStatus(response);
+        this.props.checkDeclinedPermissions();
+        this.props.fetchPhotos();
     }
 
     loginHandler() {
         let self = this;
         window.FB.login(function (response) {
-            self.props.dispatch(setConnectionStatus(response));
+            self.props.setConnectionStatus(response);
             if (response.authResponse) {
-                self.props.dispatch(checkDeclinedPermissions());
-                self.getPhotos();
+                self.props.checkDeclinedPermissions();
+                self.props.fetchPhotos();
 
             } else {
                 console.warn('User cancelled login or did not fully authorize.');
@@ -109,15 +106,23 @@ class Main extends Component {
 }
 
 Main.propTypes = {
+    fetchPhotos: PropTypes.func.isRequired,
+    setConnectionStatus: PropTypes.func.isRequired,
+    checkDeclinedPermissions: PropTypes.func.isRequired,
     success: PropTypes.bool.isRequired,
     loggedIn: PropTypes.bool.isRequired,
     hasDeclinedPermission: PropTypes.bool.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        ownProps,
-        ...appCoreSelector(state)
-    };
-};
-export default connect(mapStateToProps)(Main);
+const mapStateToProps = (state, ownProps) => ({
+    ownProps,
+    ...appCoreSelector(state)
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+    fetchPhotos,
+    setConnectionStatus,
+    checkDeclinedPermissions
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

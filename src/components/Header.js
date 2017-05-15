@@ -6,7 +6,10 @@ import SignInButton from "./SignInButton";
 
 const Header = ({title, loginHandler}) => {
     return (
-        <div className="bg-success">
+        <div className="bg-success" style={{
+            padding: '20px',
+            textAlign: 'center'
+        }}>
             <Title title={title}/>
             <SignInButton onSignIn={loginHandler}/>
         </div>

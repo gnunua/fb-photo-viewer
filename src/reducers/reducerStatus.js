@@ -1,4 +1,4 @@
-import {CONNECTION_STATUS, SET_DECLIEND_PERMISSION} from "../actions/actionTypes";
+import {CONNECTION_STATUS, SET_DECLINED_PERMISSION} from "../actions/actionTypes";
 
 const initialData = {
     status: '',
@@ -13,7 +13,7 @@ const reducerStatus = (state = initialData, action) => {
                 ...state,
                 ...action.payload
             };
-        case SET_DECLIEND_PERMISSION :
+        case SET_DECLINED_PERMISSION :
             return {
                 ...state,
                 hasDeclinedPermission: action.payload

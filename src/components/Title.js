@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const Title = ({title}) => {
     return (
         <div>
-            <h3 className="text-primary">
+            <h3 className="text-primary" style={{margin: '15px'}}>
                 {title}
             </h3>
         </div>

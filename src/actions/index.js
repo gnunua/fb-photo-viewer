@@ -1,4 +1,10 @@
 import * as Actions from "./actionTypes";
+import {MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT} from "../config/index";
+
+//helper functions
+const makeFacebookPhotoURL = (id, accessToken) => `https://graph.facebook.com/${id}/picture?access_token=${accessToken}`;
+const getRandomIntInRange = (min, max) => Math.floor(Math.random() * (max - min)) + min;
+const randomPhotoCount = () => getRandomIntInRange(MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT);
 
 export const setConnectionStatus = (payload) => ({
     type: Actions.CONNECTION_STATUS,
@@ -14,12 +20,10 @@ const fetchPhotosSuccess = (response) => ({
     payload: response
 });
 
-const fetchPhotosFaild = (err) => ({
+const fetchPhotosFail = (err) => ({
     type: Actions.FETCH_PHOTOS_FAIL,
     payload: err
 });
-
-const makeFacebookPhotoURL = (id, accessToken) => `https://graph.facebook.com/${id}/picture?access_token=${accessToken}`;
 
 export const fetchPhotos = () => {
     return function (dispatch, getState) {
@@ -33,11 +37,11 @@ export const fetchPhotos = () => {
         FB.api(
             '/me/photos',
             'GET',
-            {"fields": "id", "limit": "10"},
+            {"fields": "id", "limit": `${randomPhotoCount()}`},
             function (response) {
 
                 if (response.error) {
-                    dispatch(fetchPhotosFaild(response.error));
+                    dispatch(fetchPhotosFail(response.error));
                     return;
                 }
                 let {data} = response;
@@ -57,13 +61,13 @@ export const fetchPhotos = () => {
 };
 
 const setDeclinedPermission = (payload) => ({
-    type: Actions.SET_DECLIEND_PERMISSION,
+    type: Actions.SET_DECLINED_PERMISSION,
     payload
 });
 
 export const checkDeclinedPermissions = () => {
     return function (dispatch) {
-        FB.api('/me/permissions', function(response) {
+        FB.api('/me/permissions', function (response) {
             if (response.error) {
                 return;
             }
