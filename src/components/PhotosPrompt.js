@@ -1,11 +1,17 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
+import Loader from "./Loader";
 
 class PhotosPrompt extends Component {
     render() {
         const renderPhotos = () => {
-            return this.props.photos.map(({id, url}) => {
-
+            const {photos, ownProps: {isLoaded}} = this.props;
+            if (!isLoaded) {
+                return (
+                    <Loader/>
+                );
+            }
+            return photos.map(({id, url}) => {
                 return (
                     <div className="col-md-4" key={id}>
                         <img src={url} className="img-responsive img-rounded"/>
@@ -15,9 +21,9 @@ class PhotosPrompt extends Component {
         };
 
         return (
-                <div className="bg-success">
-                    {renderPhotos()}
-                </div>
+            <div>
+                {renderPhotos()}
+            </div>
 
         );
     }

@@ -3,11 +3,12 @@ import App from "./App";
 import {connect} from "react-redux";
 import PhotosPrompt from "./PhotosPrompt";
 import {APP_ID, GRAPH_API_VERSION} from "../config";
-import ContentWrapper from "./ContentWrapper";
+import SignInButton from "./SignInButton";
 import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
+import {appCoreSelector} from "../selectors";
+import Header from "./Title";
 
 class Main extends React.Component {
-
     static loadSdk() {
         (function (d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
@@ -49,10 +50,8 @@ class Main extends React.Component {
     }
 
     statusChangeCallback(response) {
-        console.log('statusChangeCallback', response);
         this.props.dispatch(setConnectionStatus(response));
         this.props.dispatch(checkDeclinedPermissions());
-
         this.getPhotos();
     }
 
@@ -60,16 +59,12 @@ class Main extends React.Component {
         let self = this;
         FB.login(function (response) {
             self.props.dispatch(setConnectionStatus(response));
-
             if (response.authResponse) {
-                console.log('Welcome!  Fetching your information.... ');
                 self.props.dispatch(checkDeclinedPermissions());
-
                 self.getPhotos();
 
             } else {
-
-                console.log('User cancelled login or did not fully authorize.');
+                console.warn('User cancelled login or did not fully authorize.');
             }
         }, {scope: 'user_photos', auth_type: 'rerequest'});
     }
@@ -80,50 +75,37 @@ class Main extends React.Component {
     }
 
     render() {
-        let {hasDeclinedPermission, status} = this.props;
+        const {hasDeclinedPermission, success, isLoaded, loggedIn} = this.props;
 
         const renderHeader = () => {
 
-            if (status === 'connected' && hasDeclinedPermission === false) {
+            if (success) {
                 return (null);
-            } else if (status === 'connected' && hasDeclinedPermission === false) {
+            } else if (hasDeclinedPermission) {
                 return (
                     <div>
-                        <h3 className="text-primary">
-                            Unable to retrieve photos
+                        <Header title={`Unable to retrieve photos
                             The required permissions was not granted. Please grant view photos permissions.
-                            Press Sign in again to grant.
-                        </h3>
-                        <button type="button" className="btn btn-primary btn-lg center-block"
-                                onClick={this.loginHandler}>
-                            Sign in with facebook!
-                        </button>
+                            Press Sign in again to grant.`}
+                        />
+                        <SignInButton onSignIn={this.loginHandler}/>
                     </div>
                 );
-            } else {
+            } else if (!loggedIn) {
                 return (
                     <div>
-                        <h3 className="text-primary">
-                            Please sign in with your facebook account and make sure to grant view photos permission
-                        </h3>
-                        <button type="button" className="btn btn-primary btn-lg center-block"
-                                onClick={this.loginHandler}>
-                            Sign in with facebook!
-                        </button>
+                        <Header
+                            title={"Please sign in with your facebook account and make sure to grant view photos permission"}/>
+                        <SignInButton onSignIn={this.loginHandler}/>
                     </div>
                 );
             }
-
         };
 
         return (
             <App>
-                <div className="center-block">
-                    <ContentWrapper isLoaded = { !(status === "" && hasDeclinedPermission === null) }>
-                        {renderHeader()}
-                        <PhotosPrompt/>
-                    </ContentWrapper>
-                </div>
+                {renderHeader()}
+                <PhotosPrompt isLoaded={isLoaded}/>
             </App>
         );
     }
@@ -133,8 +115,7 @@ class Main extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     return {
         ownProps,
-        status: state.appStatus.status,
-        hasDeclinedPermission: state.appStatus.hasDeclinedPermission
+        ...appCoreSelector(state),
     };
 };
 export default connect(mapStateToProps)(Main);

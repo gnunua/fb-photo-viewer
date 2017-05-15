@@ -3,7 +3,7 @@ import Loader from "./Loader";
 
 const ContentWrapper = (props) => {
 
-    if (props.isLoaded) {
+    if (props.appReady) {
         return (<div>
             {props.children}
         </div>);
