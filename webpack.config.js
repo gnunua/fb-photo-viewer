@@ -3,9 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 console.warn("Webpack running in ", process.env.NODE_ENV);
 
-
 let plugins = [
-
     new HtmlWebpackPlugin({
         template: 'index.template.ejs',
         hash: true,
@@ -17,13 +15,9 @@ let plugins = [
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         'version': JSON.stringify(require("./package.json").version)
     })
-
-
 ];
 
-//------------------------------- Production mode ----------------------------
 if (process.env.NODE_ENV === "production") {
-
     plugins.push(new webpack.optimize.DedupePlugin());
     plugins.push(new webpack.optimize.UglifyJsPlugin({
         minimize: true,

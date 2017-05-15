@@ -66,7 +66,7 @@ export const checkDeclinedPermissions = () => {
     return function (dispatch) {
         window.FB.api('/me/permissions', function ({error, data}) {
             if (error) {
-                console.log('permissions fetching error ', error)
+                console.log('permissions fetching error ', error);
                 return;
             }
             let hasDeclined = false;
