@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 const styles = {
 
@@ -22,9 +23,9 @@ const styles = {
 class Loader extends Component {
     constructor(props) {
         super(props);
-        this.originalText = "Loading";
+        this.originalText = this.props.text;
         this.state = {
-            text: this.originalText
+            text: this.props.text
         };
         this.loadingTextModifier = this.loadingTextModifier.bind(this);
     }
@@ -43,7 +44,11 @@ class Loader extends Component {
     }
 
     componentDidMount() {
-        setInterval(this.loadingTextModifier, 500);
+        this.intervalId = setInterval(this.loadingTextModifier, this.props.speed);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.intervalId);
     }
 
     render() {
@@ -56,6 +61,16 @@ class Loader extends Component {
         );
     }
 }
+
+Loader.defaultProps = {
+    text: 'Loading',
+    speed: 500
+};
+
+Loader.propTypes = {
+    text: PropTypes.string.isRequired,
+    speed: PropTypes.number.isRequired
+};
 
 export default Loader;
 
