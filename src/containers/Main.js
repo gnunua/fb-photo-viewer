@@ -12,7 +12,7 @@ import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../act
 
 class Main extends Component {
 
-    propTypes = {
+    static propTypes = {
         fetchPhotos: PropTypes.func.isRequired,
         setConnectionStatus: PropTypes.func.isRequired,
         checkDeclinedPermissions: PropTypes.func.isRequired,
