@@ -21,6 +21,17 @@ const styles = {
 };
 
 class Loader extends Component {
+
+    static defaultProps = {
+        text: 'Loading',
+        speed: 300
+    };
+
+    propTypes = {
+        text: PropTypes.string.isRequired,
+        speed: PropTypes.number.isRequired
+    };
+
     constructor(props) {
         super(props);
         this.originalText = this.props.text;
@@ -61,11 +72,6 @@ class Loader extends Component {
         );
     }
 }
-
-Loader.defaultProps = {
-    text: 'Loading',
-    speed: 500
-};
 
 Loader.propTypes = {
     text: PropTypes.string.isRequired,

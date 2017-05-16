@@ -11,6 +11,16 @@ import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN, SIGN_IN, GRANT} from "../con
 import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
 
 class Main extends Component {
+
+    propTypes = {
+        fetchPhotos: PropTypes.func.isRequired,
+        setConnectionStatus: PropTypes.func.isRequired,
+        checkDeclinedPermissions: PropTypes.func.isRequired,
+        success: PropTypes.bool.isRequired,
+        loggedIn: PropTypes.bool.isRequired,
+        hasDeclinedPermission: PropTypes.bool.isRequired
+    };
+
     static loadSdk() {
         (function (d, s, id) {
             let js, fjs = d.getElementsByTagName(s)[0];
@@ -106,15 +116,6 @@ class Main extends Component {
     }
 
 }
-
-Main.propTypes = {
-    fetchPhotos: PropTypes.func.isRequired,
-    setConnectionStatus: PropTypes.func.isRequired,
-    checkDeclinedPermissions: PropTypes.func.isRequired,
-    success: PropTypes.bool.isRequired,
-    loggedIn: PropTypes.bool.isRequired,
-    hasDeclinedPermission: PropTypes.bool.isRequired
-};
 
 const mapStateToProps = (state, ownProps) => ({
     ownProps,
