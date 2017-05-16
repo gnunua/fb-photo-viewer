@@ -1,9 +1,22 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
-console.warn("Webpack running in  production");
+console.warn("Webpack running in production");
 
-let plugins = [
+var plugins = [
+    new webpack.DllReferencePlugin({
+        context: '.',
+        manifest: require('./dist/vendor-manifest.json')
+    }),
+    new AddAssetHtmlPlugin({
+        filepath: './dist/vendor.bundle.js',
+        publicPath: "",
+        outputPath: "",
+        hash: true,
+        includeSourcemap: false
+    }),
+
     new HtmlWebpackPlugin({
         template: 'index.template.ejs',
         hash: true,
@@ -14,20 +27,20 @@ let plugins = [
     new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
         'version': JSON.stringify(require("./package.json").version)
+    }),
+
+    new webpack.optimize.UglifyJsPlugin({
+        minimize: true,
+        sourceMap: true,
+        output: {
+            comments: false
+        },
+        compress: {
+            drop_console: true,
+            warnings: false
+        }
     })
 ];
-
-plugins.push(new webpack.optimize.UglifyJsPlugin({
-    minimize: true,
-    sourceMap: true,
-    output: {
-        comments: false
-    },
-    compress: {
-        drop_console: true,
-        warnings: false
-    }
-}));
 
 module.exports = {
     devServer: {
@@ -36,7 +49,6 @@ module.exports = {
         port: 1212,
         historyApiFallback: true
     },
-    devtool: 'source-map',
 
     entry: [
         'babel-polyfill',
@@ -51,7 +63,9 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.js$/, exclude: /node_modules/, loader: "babel-loader",
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader",
                 query: {
                     presets: ['es2015', 'stage-0']
                 }

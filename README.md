@@ -17,13 +17,17 @@ subdirectories:
 * **dist** - generated sources ready for deployment
  ### Build process
    Use [Webpack](https://webpack.github.io/) to bundle code.
-   There are 2 webpack configurations:
+   There are 3 webpack configurations:
    - **webpack.config.js** - webpack config for creating the development bundle
    - **webpack.config.prod.js** - webpack config for creating the development bundle
+   - **webpack.vendor.config.js** webpack config for creating the "vendor" bundle 
+   (bundle containing all 3rd party libs)
 
 ### Running tasks
    npm can be used to run tasks from package.json the following tasks are available:
    
 * **start** - runs webpack dev server in hot mode
-* **build:prod** - builds production bundle js file
-* **build:dev** - builds development bundle js file
+* **build:prod** - builds app production bundles
+* **build:dev** - builds development bundles
+* **build-vendor:prod** - builds production vendor bundles
+* **build-all:prod** - builds production all bundle files

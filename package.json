@@ -6,12 +6,15 @@
   "repository": "https://github.com/gnunua/fb-photo-viewer.git",
   "scripts": {
     "start": "webpack-dev-server --inline --hot",
+    "build-vendor:prod": "webpack --config webpack.vendor.config.js",
     "build:prod": "webpack --config webpack.config.prod.js -p",
-    "build:dev": "webpack --config webpack.config.js"
+    "build:dev": "webpack --config webpack.config.js",
+    "build-all:prod": "npm run build-vendor:prod && npm run build:prod"
   },
   "author": "Gnun Ulikhanyan",
   "license": "MIT",
   "dependencies": {
+    "add-asset-html-webpack-plugin": "^2.0.1",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-polyfill": "^6.23.0",
