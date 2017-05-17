@@ -23,7 +23,7 @@ const styles = {
 class Loader extends Component {
     static defaultProps = {
         text: 'Loading',
-        speed: 300
+        speed: 200
     };
 
     static propTypes = {

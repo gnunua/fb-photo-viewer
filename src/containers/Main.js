@@ -4,12 +4,12 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import App from "../components/App";
 import PhotosPrompt from "./PhotosPrompt";
-import {APP_ID, GRAPH_API_VERSION} from "../config";
 import {appCoreSelector} from "../selectors";
 import Header from "../components/Header";
 import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN, SIGN_IN, GRANT} from "../config/consts";
 import {setConnectionStatus, fetchPhotos, fetchGrantedPermissions} from "../actions/index";
 import fbApi from "../helpers/fbApi";
+import {fbInitConfig} from "../config";
 
 class Main extends Component {
 
@@ -39,44 +39,31 @@ class Main extends Component {
         super(props);
         this.init = this.init.bind(this);
         this.loginHandler = this.loginHandler.bind(this);
+        this.renderHeader = this.renderHeader.bind(this);
     }
 
     init() {
         window.fbAsyncInit = function () {
-            window.FB.init({
-                appId: APP_ID,
-                cookie: true,
-                xfbml: true,
-                version: GRAPH_API_VERSION
-            });
-
+            window.FB.init(fbInitConfig);
             window.FB.AppEvents.logPageView();
 
             window.FB.getLoginStatus(function (response) {
-                this.statusChangeCallback(response);
+                this.connectionCallBack(response);
             }.bind(this));
         }.bind(this);
     }
 
-    statusChangeCallback(response) {
+    connectionCallBack(response) {
         this.props.setConnectionStatus(response);
-        this.props.fetchGrantedPermissions();
-        this.props.fetchPhotos();
-    }
-
-    loginCallBack(response) {
-        this.props.setConnectionStatus(response);
-        if (this.authResponse) {
+        if (response.authResponse) {
             this.props.fetchGrantedPermissions();
             this.props.fetchPhotos();
-        } else {
-            console.warn('User cancelled login or did not fully authorize.');
         }
     }
 
     loginHandler() {
         let loginPayload = {scope: 'user_photos', auth_type: 'rerequest'};
-        fbApi.login(this.loginCallBack.bind(this), loginPayload);
+        fbApi.login(this.connectionCallBack.bind(this), loginPayload);
     }
 
     componentDidMount() {
@@ -84,34 +71,33 @@ class Main extends Component {
         Main.loadSdk();
     }
 
-    render() {
+    renderHeader() {
         const {hasDeclinedPermission, success, loggedIn} = this.props;
+        if (success) {
+            return (null);
+        } else if (hasDeclinedPermission) {
+            return (
+                <Header
+                    title={TITLE_ABSENT_OF_PERMISSIONS}
+                    btnMeassage={GRANT}
+                    loginHandler={this.loginHandler}
+                />
+            );
+        } else if (!loggedIn) {
+            return (
+                <Header
+                    title={TITLE_SIGN_IN}
+                    btnMeassage={SIGN_IN}
+                    loginHandler={this.loginHandler}
+                />
+            );
+        }
+    }
 
-        const renderHeader = () => {
-            if (success) {
-                return (null);
-            } else if (hasDeclinedPermission) {
-                return (
-                    <Header
-                        title={TITLE_ABSENT_OF_PERMISSIONS}
-                        btnMeassage={GRANT}
-                        loginHandler={this.loginHandler}
-                    />
-                );
-            } else if (!loggedIn) {
-                return (
-                    <Header
-                        title={TITLE_SIGN_IN}
-                        btnMeassage={SIGN_IN}
-                        loginHandler={this.loginHandler}
-                    />
-                );
-            }
-        };
-
+    render() {
         return (
             <App>
-                {renderHeader()}
+                {this.renderHeader()}
                 <PhotosPrompt/>
             </App>
         );
