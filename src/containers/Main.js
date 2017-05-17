@@ -8,14 +8,15 @@ import {APP_ID, GRAPH_API_VERSION} from "../config";
 import {appCoreSelector} from "../selectors";
 import Header from "../components/Header";
 import {TITLE_ABSENT_OF_PERMISSIONS, TITLE_SIGN_IN, SIGN_IN, GRANT} from "../config/consts";
-import {setConnectionStatus, fetchPhotos, checkDeclinedPermissions} from "../actions/index";
+import {setConnectionStatus, fetchPhotos, fetchGrantedPermissions} from "../actions/index";
+import fbApi from "../helpers/fbApi";
 
 class Main extends Component {
 
     static propTypes = {
         fetchPhotos: PropTypes.func.isRequired,
         setConnectionStatus: PropTypes.func.isRequired,
-        checkDeclinedPermissions: PropTypes.func.isRequired,
+        fetchGrantedPermissions: PropTypes.func.isRequired,
         success: PropTypes.bool.isRequired,
         loggedIn: PropTypes.bool.isRequired,
         hasDeclinedPermission: PropTypes.bool.isRequired
@@ -59,22 +60,23 @@ class Main extends Component {
 
     statusChangeCallback(response) {
         this.props.setConnectionStatus(response);
-        this.props.checkDeclinedPermissions();
+        this.props.fetchGrantedPermissions();
         this.props.fetchPhotos();
     }
 
-    loginHandler() {
-        let self = this;
-        window.FB.login(function (response) {
-            self.props.setConnectionStatus(response);
-            if (response.authResponse) {
-                self.props.checkDeclinedPermissions();
-                self.props.fetchPhotos();
+    loginCallBack(response) {
+        this.props.setConnectionStatus(response);
+        if (this.authResponse) {
+            this.props.fetchGrantedPermissions();
+            this.props.fetchPhotos();
+        } else {
+            console.warn('User cancelled login or did not fully authorize.');
+        }
+    }
 
-            } else {
-                console.warn('User cancelled login or did not fully authorize.');
-            }
-        }, {scope: 'user_photos', auth_type: 'rerequest'});
+    loginHandler() {
+        let loginPayload = {scope: 'user_photos', auth_type: 'rerequest'};
+        fbApi.login(this.loginCallBack.bind(this), loginPayload);
     }
 
     componentDidMount() {
@@ -125,7 +127,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
     fetchPhotos,
     setConnectionStatus,
-    checkDeclinedPermissions
+    fetchGrantedPermissions
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

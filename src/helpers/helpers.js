@@ -1,4 +1,4 @@
-import {MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT} from "./config/index";
+import {MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT} from "../config/index";
 
 export const makeFacebookPhotoURL = (id, accessToken) => `https://graph.facebook.com/${id}/picture?access_token=${accessToken}`;
 export const getRandomIntInRange = (min, max) => Math.floor(Math.random() * (max - min)) + min;

@@ -1,5 +1,6 @@
 import * as Actions from "./actionTypes";
-import {randomPhotoCount, shuffleArray, makeFacebookPhotoURL} from "../helpers";
+import fbApi from "../helpers/fbApi";
+import {randomPhotoCount, shuffleArray, makeFacebookPhotoURL} from "../helpers/helpers";
 
 export const setConnectionStatus = (payload) => ({
     type: Actions.CONNECTION_STATUS,
@@ -21,6 +22,8 @@ const fetchPhotosFail = (err) => ({
 });
 
 export const fetchPhotos = () => {
+    const request = fbApi.get('/me/photos', {"fields": "id", "limit": `${randomPhotoCount()}`});
+
     return function (dispatch, getState) {
         dispatch(fetchPhotosStart());
         let accessToken;
@@ -30,19 +33,9 @@ export const fetchPhotos = () => {
             accessToken = authResponse.accessToken;
         }
 
-        window.FB.api(
-            '/me/photos',
-            'GET',
-            {"fields": "id", "limit": `${randomPhotoCount()}`},
-            function ({error, data}) {
-
-                if (error) {
-                    dispatch(fetchPhotosFail(error));
-                    return;
-                }
-
+        request
+            .then((data) => {
                 shuffleArray(data);
-
                 let newData = data.map(({id}) => {
                     let url = makeFacebookPhotoURL(id, accessToken);
                     return {
@@ -50,34 +43,38 @@ export const fetchPhotos = () => {
                         url
                     };
                 });
-
                 dispatch(fetchPhotosSuccess(newData));
-            }
-        );
+            })
+            .catch((error) => {
+                dispatch(fetchPhotosFail(error));
+            });
+
     };
 };
 
-const setDeclinedPermission = (payload) => ({
-    type: Actions.SET_DECLINED_PERMISSION,
+const fetchGrantedPermissionSuccess = (payload) => ({
+    type: Actions.FETCH_DECLINED_PERMISSION_SUCCESS,
     payload
 });
 
-export const checkDeclinedPermissions = () => {
+export const fetchGrantedPermissions = () => {
+    const request = fbApi.get('/me/permissions');
     return function (dispatch) {
-        window.FB.api('/me/permissions', function ({error, data}) {
-            if (error) {
-                console.log('permissions fetching error ', error);
-                return;
-            }
-            let hasDeclined = false;
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].status === 'declined') {
-                    hasDeclined = true;
-                    break;
+        //dispatch(fetchGrantedPermissionsStart());
+        request
+            .then((data) => {
+                let hasDeclined = false;
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].status === 'declined') {
+                        hasDeclined = true;
+                        break;
+                    }
                 }
-            }
-            dispatch(setDeclinedPermission(hasDeclined));
-        });
-
+                dispatch(fetchGrantedPermissionSuccess(hasDeclined));
+            })
+            .catch((error) => {
+                //dispatch(fetchGrantedPermissionsFail(error));
+                console.error('permissions fetching error ', error);
+            });
     };
 };
