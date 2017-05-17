@@ -10,7 +10,8 @@ subdirectories:
   - **reducers** - all redux store reducers are here
   - **config**  - application configuration files
   - **constants** - constant definitions
-  - **helpers.js** - helper functions
+  - **helpers** - helper files dictionary
+     - **fbApi.js** - facebook graph api wrapper
   - **index.js** - application entry point scripts
   - **selectors.js** -  Using [redux-reselect](https://github.com/reactjs/reselect) selectors library
 
