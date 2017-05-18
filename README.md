@@ -10,17 +10,17 @@ subdirectories:
   - **reducers** - all redux store reducers are here
   - **config**  - application configuration files
   - **constants** - constant definitions
-  - **helpers** - helper files dictionary
+  - **helpers** - helper modules dictionary
      - **fbApi.js** - facebook graph api wrapper
   - **index.js** - application entry point scripts
-  - **selectors.js** -  Using [redux-reselect](https://github.com/reactjs/reselect) selectors library
+  - **selectors.js** -  Usage [redux-reselect](https://github.com/reactjs/reselect) selectors library
 
 * **dist** - generated sources ready for deployment
  ### Build process
    Use [Webpack](https://webpack.github.io/) to bundle code.
    There are 3 webpack configurations:
    - **webpack.config.js** - webpack config for creating the development bundle
-   - **webpack.config.prod.js** - webpack config for creating the development bundle
+   - **webpack.config.prod.js** - webpack config for creating the production bundle
    - **webpack.vendor.config.js** webpack config for creating the "vendor" bundle 
    (bundle containing all 3rd party libs)
 
