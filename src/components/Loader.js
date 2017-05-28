@@ -72,10 +72,5 @@ class Loader extends Component {
     }
 }
 
-Loader.propTypes = {
-    text: PropTypes.string.isRequired,
-    speed: PropTypes.number.isRequired
-};
-
 export default Loader;
 

@@ -12,21 +12,21 @@ const fbFetch = (url, method = 'GET', fields = {}) =>
         );
     });
 
+const dummy = () => new Promise(function (reject, resolve) {
+    reject('note implemented yet!');
+});
+
 const login = (callback, payload) => {
     window.FB.login(callback, payload);
 };
 
 const get = (url, fields) => fbFetch(url, 'GET', fields);
 
-const post = () => {
-    console.warn('note implemented yet!');
-};
-const put = () => () => {
-    console.warn('note implemented yet!');
-};
-const del = () => () => {
-    console.warn('note implemented yet!');
-};
+const post = () => dummy();
+
+const put = () => dummy();
+
+const del = () => dummy();
 
 export default {
     login, get, post, put, delete: del
