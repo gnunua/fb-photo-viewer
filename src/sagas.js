@@ -7,37 +7,37 @@ import {
     FETCH_PHOTOS
 } from "./actions/actionTypes";
 
-const getImages = (imgData, accessToken) => imgData.map(({id}) => ({id, url: makeFacebookPhotoURL(id, accessToken)}));
-const hasDeclinedPermissions = permissionsData => permissionsData.some((item) => item.status === 'declined');
+export const getImages = (imgData, accessToken) => imgData.map(({id}) => ({id, url: makeFacebookPhotoURL(id, accessToken)}));
+export const hasDeclinedPermissions = permissionsData => permissionsData.some((item) => item.status === 'declined');
 
-const accessTokenSelector = state => {
+export const accessTokenSelector = state => {
     let {authResponse} = state.appStatus;
     if (authResponse) {
         return authResponse.accessToken;
     }
 };
 
-function *fetchPhotosTask() {
+export function *fetchPhotosTask() {
 
     yield put(fetchPhotosStart());
 
     try {
         const data = yield call(fbApi.get, '/me/photos', {"fields": "id", "limit": `${10}`});
 
-        const accessToken = yield select(accessTokenSelector);
-
         yield call(shuffleArray, data);
+
+        const accessToken = yield select(accessTokenSelector);
 
         const newData = yield call(getImages, data, accessToken);
 
         yield put(fetchPhotosSuccess(newData));
 
     } catch (error) {
-        yield put(fetchPhotosFail());
+        yield put(fetchPhotosFail(error));
     }
 }
 
-function *fetchGrantedPermissions() {
+export function *fetchGrantedPermissions() {
 
     yield put({type: FETCH_DECLINED_PERMISSION_START});
 
